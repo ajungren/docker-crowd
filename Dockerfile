@@ -17,8 +17,7 @@ ENV CROWD_HOME=/var/atlassian/crowd \
 
 ADD splash-context.xml /opt/crowd/webapps/splash.xml
 
-RUN export MYSQL_DRIVER_VERSION=5.1.44 && \
-    export CONTAINER_USER=crowd &&  \
+RUN export CONTAINER_USER=crowd &&  \
     export CONTAINER_GROUP=crowd &&  \
     addgroup -g $CONTAINER_GID $CONTAINER_GROUP &&  \
     adduser -u $CONTAINER_UID \
@@ -49,15 +48,6 @@ RUN export MYSQL_DRIVER_VERSION=5.1.44 && \
     mkdir -p ${CROWD_INSTALL}/apache-tomcat/webapps/ROOT && \
     mkdir -p ${CROWD_INSTALL}/apache-tomcat/conf/Catalina/localhost && \
     echo "crowd.home=${CROWD_HOME}" > ${CROWD_INSTALL}/crowd-webapp/WEB-INF/classes/crowd-init.properties && \
-    # Install database drivers
-    rm -f \
-      ${CROWD_INSTALL}/apache-tomcat/lib/mysql-connector-java*.jar &&  \
-    wget -O /tmp/mysql-connector-java-${MYSQL_DRIVER_VERSION}.tar.gz \
-      http://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-${MYSQL_DRIVER_VERSION}.tar.gz && \
-    tar xzf /tmp/mysql-connector-java-${MYSQL_DRIVER_VERSION}.tar.gz \
-      -C /tmp && \
-    cp /tmp/mysql-connector-java-${MYSQL_DRIVER_VERSION}/mysql-connector-java-${MYSQL_DRIVER_VERSION}-bin.jar \
-      ${CROWD_INSTALL}/apache-tomcat/lib/mysql-connector-java-${MYSQL_DRIVER_VERSION}-bin.jar  &&  \
     # Adjusting directories
     mv ${CROWD_INSTALL}/apache-tomcat/webapps/ROOT /opt/crowd/splash-webapp && \
     mv ${CROWD_INSTALL}/apache-tomcat/conf/Catalina/localhost/* /opt/crowd/webapps && \
