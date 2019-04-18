@@ -92,9 +92,10 @@ LABEL com.blacklabelops.application.crowd.version=$CROWD_VERSION \
       com.blacklabelops.image.builddate.crowd=${BUILD_DATE}
 
 WORKDIR /var/atlassian/crowd
-VOLUME ["/var/atlassian/crowd"]
+VOLUME ["/var/atlassian/crowd", "/var/cache/shareclasses"]
 EXPOSE 8095
 HEALTHCHECK --interval=1m --timeout=30s --start-period=5s --retries=3 CMD curl -f http://localhost:8095/ || exit 1
 COPY imagescripts /home/crowd
+ENV JAVA_OPTS="-Xshareclasses:cacheDir=/var/cache/shareclasses"
 ENTRYPOINT ["/sbin/tini","--","/home/crowd/docker-entrypoint.sh"]
 CMD ["crowd"]
