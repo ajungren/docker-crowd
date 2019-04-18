@@ -1,7 +1,7 @@
 FROM adoptopenjdk/openjdk8-openj9:alpine
 MAINTAINER Steffen Bleul <sbl@blacklabelops.com>
 
-ARG CROWD_VERSION=3.3.4
+ARG CROWD_VERSION=3.4.3
 # permissions
 ARG CONTAINER_UID=1000
 ARG CONTAINER_GID=1000
