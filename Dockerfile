@@ -94,6 +94,7 @@ LABEL com.blacklabelops.application.crowd.version=$CROWD_VERSION \
 WORKDIR /var/atlassian/crowd
 VOLUME ["/var/atlassian/crowd"]
 EXPOSE 8095
+HEALTHCHECK --interval=1m --timeout=30s --start-period=5s --retries=3 CMD curl -f http://localhost:8095/ || exit 1
 COPY imagescripts /home/crowd
 ENTRYPOINT ["/sbin/tini","--","/home/crowd/docker-entrypoint.sh"]
 CMD ["crowd"]
