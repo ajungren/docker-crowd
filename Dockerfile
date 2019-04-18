@@ -1,4 +1,4 @@
-FROM blacklabelops/java:openjdk.8
+FROM adoptopenjdk/openjdk8-openj9:alpine
 MAINTAINER Steffen Bleul <sbl@blacklabelops.com>
 
 ARG CROWD_VERSION=3.3.0
@@ -26,15 +26,15 @@ RUN export CONTAINER_USER=crowd &&  \
             -s /bin/bash \
             -S $CONTAINER_USER &&  \
     apk add --update \
+      bash \
       ca-certificates \
-      gzip \
       curl \
+      gzip \
       su-exec \
-      wget &&  \
-    # Install xmlstarlet
-    export XMLSTARLET_VERSION=1.6.1-r1              &&  \
-    wget --directory-prefix=/tmp https://github.com/menski/alpine-pkg-xmlstarlet/releases/download/${XMLSTARLET_VERSION}/xmlstarlet-${XMLSTARLET_VERSION}.apk && \
-    apk add --allow-untrusted /tmp/xmlstarlet-${XMLSTARLET_VERSION}.apk && \
+      tini \
+      wget \
+      xmlstarlet \
+      && \
     wget -O /tmp/crowd.tar.gz https://www.atlassian.com/software/crowd/downloads/binary/atlassian-crowd-${CROWD_VERSION}.tar.gz && \
     tar zxf /tmp/crowd.tar.gz -C /tmp && \
     ls -A /tmp && \
@@ -68,10 +68,6 @@ RUN export CONTAINER_USER=crowd &&  \
     chown -R crowd:crowd /home/${CONTAINER_USER} && \
     chown -R crowd:crowd ${CROWD_HOME} && \
     chown -R crowd:crowd ${CROWD_INSTALL} && \
-    # Install Tini Zombie Reaper And Signal Forwarder
-    export TINI_VERSION=0.9.0 && \
-    curl -fsSL https://github.com/krallin/tini/releases/download/v${TINI_VERSION}/tini-static -o /bin/tini && \
-    chmod +x /bin/tini && \
     # Remove obsolete packages
     apk del \
       ca-certificates \
@@ -99,5 +95,5 @@ WORKDIR /var/atlassian/crowd
 VOLUME ["/var/atlassian/crowd"]
 EXPOSE 8095
 COPY imagescripts /home/crowd
-ENTRYPOINT ["/bin/tini","--","/home/crowd/docker-entrypoint.sh"]
+ENTRYPOINT ["/sbin/tini","--","/home/crowd/docker-entrypoint.sh"]
 CMD ["crowd"]
